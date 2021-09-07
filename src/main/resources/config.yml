@@ -1,0 +1,8 @@
+timer:
+  min: 1  # SECONDS
+  max: 10 # SECONDS
+  # (SIDE NOTE: Number is multiplied by 20 to convert to game ticks)
+world: "void"
+messages:
+  spawned: "{GREEN}A ${SPAWNED_BLOCK} has spawned at ${LOCATION_X} ${LOCATION_Y} ${LOCATION_Z}"
+  error: "{RED}I uh... what broke?"

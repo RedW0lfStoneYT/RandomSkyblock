@@ -1,0 +1,5 @@
+name: RandomSkyblock
+version: '${project.version}'
+main: com.redw0lfstone.randomskyblock.RandomSkyblock
+api-version: 1.17
+authors: [ RedW0lfStone ]
