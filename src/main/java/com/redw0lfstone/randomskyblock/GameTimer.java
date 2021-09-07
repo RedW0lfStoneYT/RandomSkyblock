@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -26,55 +27,76 @@ public class GameTimer {
 
             @Override
             public void run() {
-                Material mat = randomEnum(Material.class, blockRandom);
-                World world = Bukkit.getWorld(RandomSkyblock.getInstance().getConfig().getString("world"));
-                List<Player> players = world.getPlayers();
+                Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
                 if (players.size() > 0) {
 
                     FileConfiguration config = RandomSkyblock.getInstance().getConfig();
 
-                    Player player = players.get(0);
-                    Location location = player.getLocation();
-                    int radius = (getCount() < config.getInt("inital_random.times") ? config.getInt("inital_random.radius") : config.getInt("random.radius")) / 2;
-                    int xMin = location.getBlockX() - radius;
-                    int xMax = location.getBlockX() + radius;
-                    int randX = blockRandom.nextInt(xMax - xMin) + xMin;
-
-                    int yMin = location.getBlockY() - radius;
-                    int yMax = location.getBlockY() + radius;
-                    int randY = blockRandom.nextInt(yMax - yMin) + yMin;
-
-                    int zMin = location.getBlockZ() - radius;
-                    int zMax = location.getBlockZ() + radius;
-                    int randZ = blockRandom.nextInt(zMax - zMin) + zMin;
-
-                    if (randY < 0) randY = 0;
-                    try {
-                        Block block = world.getBlockAt(randX, randY, randZ);
-                        if (config.getBoolean("only_replace_air") && !block.getType().isAir()) {
-                            return;
+                    for (Player player : players) {
+                        World world = player.getWorld();
+                        Material mat = randomEnum(Material.class, blockRandom);
+                        for (int x = 0; x < 2; x++) {
+                            if (!mat.isBlock()) mat = randomEnum(Material.class, blockRandom);
                         }
-                        block.setType(mat, false);
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.spawned")
-                                .replace("${SPAWNED_BLOCK}", mat.name())
-                                .replace("${X}", randX + "")
-                                .replace("${Y}", randY + "")
-                                .replace("${Z}", randZ + "")));
+                        Location location = player.getLocation();
+                        int radius = (getCount() < config.getInt("inital_random.times") ? config.getInt("inital_random.radius") : config.getInt("random.radius")) / 2;
+                        int xMin = location.getBlockX() - radius;
+                        int xMax = location.getBlockX() + radius;
+                        int randX = blockRandom.nextInt(xMax - xMin) + xMin;
 
-                    } catch (Exception e) {
+                        int yMin = location.getBlockY() - radius;
+                        int yMax = location.getBlockY() + radius;
+                        int randY = blockRandom.nextInt(yMax - yMin) + yMin;
+
+                        int zMin = location.getBlockZ() - radius;
+                        int zMax = location.getBlockZ() + radius;
+                        int randZ = blockRandom.nextInt(zMax - zMin) + zMin;
+
+                        if (randY < 0) randY = 0;
                         try {
                             Block block = world.getBlockAt(randX, randY, randZ);
-                            block.setType(Material.CHEST);
-                            Chest chest = (Chest) block.getState();
-                            chest.getInventory().addItem(new ItemStack(mat));
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")));
+                            if (config.getBoolean("only_replace_air") && !block.getType().isAir()) {
+                                return;
+                            }
+                            block.setType(mat, false);
+                            if (mat.equals(Material.CHEST) || mat.equals(Material.TRAPPED_CHEST)) {
+                                mat = randomEnum(Material.class, blockRandom);
+                                Chest chest = (Chest) block.getState();
+                                ItemStack item = new ItemStack(mat);
+                                item.setAmount(blockRandom.nextInt(config.getInt("random.item_max") - config.getInt("random.item_min")) + config.getInt("random.item_min"));
+                                chest.getInventory().addItem(item);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
+                                        .replace("${X}", randX + "")
+                                        .replace("${Y}", randY + "")
+                                        .replace("${Z}", randZ + "")));
+                                return;
+                            }
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.spawned")
+                                    .replace("${SPAWNED_BLOCK}", mat.name())
+                                    .replace("${X}", randX + "")
+                                    .replace("${Y}", randY + "")
+                                    .replace("${Z}", randZ + "")));
 
-                        } catch (Exception exc) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.error")));
-                            exc.printStackTrace();
+                        } catch (Exception e) {
+                            try {
+                                Block block = world.getBlockAt(randX, randY, randZ);
+                                block.setType(Material.CHEST);
+                                Chest chest = (Chest) block.getState();
+                                ItemStack item = new ItemStack(mat);
+                                item.setAmount(blockRandom.nextInt(config.getInt("random.item_max") - config.getInt("random.item_min")) + config.getInt("random.item_min"));
+                                chest.getInventory().addItem(item);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
+                                        .replace("${X}", randX + "")
+                                        .replace("${Y}", randY + "")
+                                        .replace("${Z}", randZ + "")));
+
+                            } catch (Exception exc) {
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.error")));
+                                exc.printStackTrace();
+                            }
                         }
-                    }
 
+                    }
                     addCount();
                 }
             }

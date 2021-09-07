@@ -4,12 +4,13 @@ timer:
   # (SIDE NOTE: Number is multiplied by 20 to convert to game ticks)
 inital_random:
   radius: 10
-  times: 10
+  times: 100
 random:
-  radius: 100
-world: "void"
+  radius: 50
+  item_min: 1
+  item_max: 100
 only_replace_air: true
 messages:
   spawned: "&aA ${SPAWNED_BLOCK} has spawned at ${X} ${Y} ${Z}"
-  chest_spawn: "&aA chest has spawned!"
+  chest_spawn: "&aA chest has spawned at ${X} ${Y} ${Z}!"
   error: "&cI uh... what broke?"
