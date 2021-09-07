@@ -13,8 +13,8 @@ public final class RandomSkyblock extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        setupConfig();
         instance = this;
+        setupConfig();
         new GameTimer();
     }
 

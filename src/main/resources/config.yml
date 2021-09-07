@@ -2,7 +2,14 @@ timer:
   min: 1  # SECONDS
   max: 10 # SECONDS
   # (SIDE NOTE: Number is multiplied by 20 to convert to game ticks)
+inital_random:
+  radius: 10
+  times: 10
+random:
+  radius: 100
 world: "void"
+only_replace_air: true
 messages:
-  spawned: "{GREEN}A ${SPAWNED_BLOCK} has spawned at ${LOCATION_X} ${LOCATION_Y} ${LOCATION_Z}"
-  error: "{RED}I uh... what broke?"
+  spawned: "&aA ${SPAWNED_BLOCK} has spawned at ${X} ${Y} ${Z}"
+  chest_spawn: "&aA chest has spawned!"
+  error: "&cI uh... what broke?"
