@@ -6,11 +6,12 @@ inital_random:
   radius: 10
   times: 100
 random:
-  radius: 50
+  radius: 30
   item_min: 1
-  item_max: 100
+  item_max: 576
 only_replace_air: true
 messages:
+  enabled: true
   spawned: "&aA ${SPAWNED_BLOCK} has spawned at ${X} ${Y} ${Z}"
   chest_spawn: "&aA chest has spawned at ${X} ${Y} ${Z}!"
   error: "&cI uh... what broke?"

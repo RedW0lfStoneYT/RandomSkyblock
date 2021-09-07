@@ -35,9 +35,7 @@ public class GameTimer {
                     for (Player player : players) {
                         World world = player.getWorld();
                         Material mat = randomEnum(Material.class, blockRandom);
-                        for (int x = 0; x < 2; x++) {
-                            if (!mat.isBlock()) mat = randomEnum(Material.class, blockRandom);
-                        }
+                        if (!mat.isBlock()) mat = randomEnum(Material.class, blockRandom);
                         Location location = player.getLocation();
                         int radius = (getCount() < config.getInt("inital_random.times") ? config.getInt("inital_random.radius") : config.getInt("random.radius")) / 2;
                         int xMin = location.getBlockX() - radius;
@@ -55,7 +53,7 @@ public class GameTimer {
                         if (randY < 0) randY = 0;
                         try {
                             Block block = world.getBlockAt(randX, randY, randZ);
-                            if (config.getBoolean("only_replace_air") && !block.getType().isAir()) {
+                            if (config.getBoolean("only_replace_air") && (!block.getType().isAir() && !block.isLiquid())) {
                                 return;
                             }
                             block.setType(mat, false);
@@ -65,13 +63,13 @@ public class GameTimer {
                                 ItemStack item = new ItemStack(mat);
                                 item.setAmount(blockRandom.nextInt(config.getInt("random.item_max") - config.getInt("random.item_min")) + config.getInt("random.item_min"));
                                 chest.getInventory().addItem(item);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
+                                if (config.getBoolean("messages.enabled")) player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
                                         .replace("${X}", randX + "")
                                         .replace("${Y}", randY + "")
                                         .replace("${Z}", randZ + "")));
                                 return;
                             }
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.spawned")
+                            if (config.getBoolean("messages.enabled")) player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.spawned")
                                     .replace("${SPAWNED_BLOCK}", mat.name())
                                     .replace("${X}", randX + "")
                                     .replace("${Y}", randY + "")
@@ -85,7 +83,7 @@ public class GameTimer {
                                 ItemStack item = new ItemStack(mat);
                                 item.setAmount(blockRandom.nextInt(config.getInt("random.item_max") - config.getInt("random.item_min")) + config.getInt("random.item_min"));
                                 chest.getInventory().addItem(item);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
+                                if (config.getBoolean("messages.enabled")) player.sendMessage(ChatColor.translateAlternateColorCodes('&', RandomSkyblock.getInstance().getConfig().getString("messages.chest_spawn")
                                         .replace("${X}", randX + "")
                                         .replace("${Y}", randY + "")
                                         .replace("${Z}", randZ + "")));
